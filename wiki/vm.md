@@ -65,7 +65,8 @@ See [Get the IP address of the VM](#get-the-ip-address-of-the-vm).
 
 ## Go to the VMs site
 
-1. Open the [https://vm.innopolis.university](https://vm.innopolis.university) site in a browser.
+1. [Connect to the correct network](#connect-to-the-correct-network).
+2. Open the [https://vm.innopolis.university](https://vm.innopolis.university) site in a browser.
 
 ## Create a VM
 
@@ -78,14 +79,15 @@ Complete these steps:
 
 ### Create a subscription
 
-1. [Go to the VMs site](#go-to-the-vms-site).
-2. Click `+ NEW`.
-3. Click `MY ACCOUNT`.
-4. Click `ADD SUBSCRIPTION`.
-5. Click `Software Engineering Toolkit`.
-6. Click the checkmark.
-7. Go to the [`SUBSCRIPTIONS`](https://vm.innopolis.university/#Workspaces/MyAccountExtension/subscriptions) tab.
-8. Look at the `SUBSCRIPTION` column.
+1. [Connect to the correct network](#connect-to-the-correct-network).
+2. [Go to the VMs site](#go-to-the-vms-site).
+3. Click `+ NEW`.
+4. Click `MY ACCOUNT`.
+5. Click `ADD SUBSCRIPTION`.
+6. Click `Software Engineering Toolkit`.
+7. Click the checkmark.
+8. Go to the [`SUBSCRIPTIONS`](https://vm.innopolis.university/#Workspaces/MyAccountExtension/subscriptions) tab.
+9. Look at the `SUBSCRIPTION` column.
 
    You should see there `Software Engineering Toolkit`.
 
@@ -99,15 +101,16 @@ Complete these steps:
 
 ### Create a VM using the subscription
 
-1. [Set up `SSH` (LOCAL)](./vm-access.md#set-up-ssh-local) if it's not yet set up.
-2. [Go to the VMs site](#go-to-the-vms-site).
-3. Click `+ NEW`.
-4. Click `STANDALONE VIRTUAL MACHINE`.
-5. Click `FROM GALLERY`.
-6. Click `ALL`.
-7. Click `Linux Ubuntu 24.04 Software Engineering Toolkit`.
-8. Click `->` to go to the page 2.
-9. Fill in the fields:
+1. [Connect to the correct network](#connect-to-the-correct-network).
+2. [Set up `SSH` (LOCA'L)](./vm-access.md#set-up-ssh-local) if it's not yet set up.
+3. [Go to the VMs site](#go-to-the-vms-site).
+4. Click `+ NEW`.
+5. Click `STANDALONE VIRTUAL MACHINE`.
+6. Click `FROM GALLERY`.
+7. Click `ALL`.
+8. Click `Linux Ubuntu 24.04 Software Engineering Toolkit`.
+9. Click `->` to go to the page 2.
+10. Fill in the fields:
     - `NAME`: Write the name of your VM (we'll refer to it as [`<your-vm-name>`](#your-vm-name-placeholder) in the instructions).
     - `NEW PASSWORD`: Write the password.
     - `CONFIRM`: Write the same password.
@@ -115,24 +118,25 @@ Complete these steps:
        1. [Get the public `SSH` key (LOCAL)](./vm-access.md#get-the-public-ssh-key-local).
        2. Copy the **full content** of the public key file.
        3. Paste the content into the input field.
-10. Note that the user's name on the VM is [`root`](./linux.md#the-user-root).
-11. Click `->` to go to the page 3.
-12. Go to `NETWORK ADAPTER 1`.
-13. Click `Not Connected`.
-14. In the drop-down list, click `StudentsCourses01;10.93.24.0/22`.
-15. Click checkmark to complete the setup.
-16. The VM will become available in approximately 20 minutes.
+11. Note that the user's name on the VM is [`root`](./linux.md#the-user-root).
+12. Click `->` to go to the page 3.
+13. Go to `NETWORK ADAPTER 1`.
+14. Click `Not Connected`.
+15. In the drop-down list, click `StudentsCourses01;10.93.24.0/22`.
+16. Click checkmark to complete the setup.
+17. The VM will become available in approximately 20 minutes.
 
 ## Go to the VM page
 
-1. [Go to the VMs site](#go-to-the-vms-site).
-2. Open the `VIRTUALS MACHINES` tab ([https://vm.innopolis.university/#Workspaces/VMExtension/VirtualMachines](https://vm.innopolis.university/#Workspaces/VMExtension/VirtualMachines)).
-3. Look at the `NAME`.
-4. Find `<your-vm-name>`.
-5. The `STATUS` should be `Running`.
-6. Click `<your-vm-name>`.
-7. Click `DASHBOARD`.
-8. You should be on the VM page.
+1. [Connect to the correct network](#connect-to-the-correct-network).
+2. [Go to the VMs site](#go-to-the-vms-site).
+3. Open the `VIRTUALS MACHINES` tab ([https://vm.innopolis.university/#Workspaces/VMExtension/VirtualMachines](https://vm.innopolis.university/#Workspaces/VMExtension/VirtualMachines)).
+4. Look at the `NAME`.
+5. Find `<your-vm-name>`.
+6. The `STATUS` should be `Running`.
+7. Click `<your-vm-name>`.
+8. Click `DASHBOARD`.
+9. You should be on the VM page.
 
 ## Get the IP address of the VM
 
