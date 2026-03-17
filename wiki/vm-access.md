@@ -15,9 +15,12 @@
 - [Set up the `SSH` key authentication for the user `<user>` (REMOTE)](#set-up-the-ssh-key-authentication-for-the-user-user-remote)
 - [Update the `SSH` config (LOCAL)](#update-the-ssh-config-local)
 - [Connect to the VM as the user `<user>` (LOCAL)](#connect-to-the-vm-as-the-user-user-local)
-- [Harden the `SSH` config (REMOTE)](#harden-the-ssh-config-remote)
-- [Restart `sshd` (REMOTE)](#restart-sshd-remote)
-- [Verify you can connect as the user `<user>` (LOCAL)](#verify-you-can-connect-as-the-user-user-local)
+- [Restrict the `SSH` connection](#restrict-the-ssh-connection)
+  - [Restrict the `SSH` config (LOCAL)](#restrict-the-ssh-config-local)
+  - [Restrict the `SSH` config for the user `<user>` (REMOTE)](#restrict-the-ssh-config-for-the-user-user-remote)
+  - [Restart `sshd` (REMOTE)](#restart-sshd-remote)
+  - [Verify that you can't connect as the user `root` (LOCAL)](#verify-that-you-cant-connect-as-the-user-root-local)
+  - [Verify that you can still connect as the user `<user>` (LOCAL)](#verify-that-you-can-still-connect-as-the-user-user-local)
 - [Troubleshooting](#troubleshooting)
   - [`Permission denied (publickey)`](#permission-denied-publickey)
   - [`Bad owner or permissions`](#bad-owner-or-permissions)
@@ -48,9 +51,7 @@ Complete these steps:
 6. [Set up the `SSH` key authentication for the user `<user>` (REMOTE)](#set-up-the-ssh-key-authentication-for-the-user-user-remote).
 7. [Update the `SSH` config (LOCAL)](#update-the-ssh-config-local).
 8. [Connect to the VM as the user `<user>` (LOCAL)](#connect-to-the-vm-as-the-user-user-local).
-9. [Harden the `SSH` config (REMOTE)](#harden-the-ssh-config-remote).
-10. [Restart `sshd` (REMOTE)](#restart-sshd-remote).
-11. [Verify you can connect as the user `<user>` (LOCAL)](#verify-you-can-connect-as-the-user-user-local).
+9. [Harden the `SSH` connection](#harden-the-ssh-connection).
 
 ## Set up `SSH` (LOCAL)
 
@@ -457,17 +458,17 @@ Complete these steps:
    >
    > [`<your-vm-name>`](./vm.md#your-vm-name-placeholder) is the same as you specified when [creating the VM](./vm.md#create-a-vm).
 
-## Harden the `SSH` connection
+## Restrict the `SSH` connection
 
 Complete these steps:
 
 <!-- no toc -->
-1. [Harden the `SSH` config (LOCAL)](#harden-the-ssh-config-local).
-2. [Harden the `SSH` config for the user `<user>` (REMOTE)](#harden-the-ssh-config-for-the-user-user-remote).
+1. [Restrict the `SSH` config (LOCAL)](#restrict-the-ssh-config-local).
+2. [Restrict the `SSH` config for the user `<user>` (REMOTE)](#restrict-the-ssh-config-for-the-user-user-remote).
 3. [Restart `sshd` (REMOTE)](#restart-sshd-remote).
 4. [Connect to the VM as the user `<user>` (LOCAL)](#connect-to-the-vm-as-the-user-user-local).
 
-### Harden the `SSH` config (LOCAL)
+### Restrict the `SSH` config (LOCAL)
 
 1. [Open the file](./vs-code.md#open-the-file-or-the-directory-using-code):
    `~/.ssh/config`.
@@ -499,14 +500,11 @@ Complete these steps:
 
 3. [Connect to the VM as the user `<user>` (LOCAL)](#connect-to-the-vm-as-the-user-user-local) to verify you can connect as the user `<user>` without a password.
 
-## Harden the `SSH` config (REMOTE)
+### Restrict the `SSH` config for the user `<user>` (REMOTE)
 
-<!-- TODO need to log in as root? -->
-<!-- TODO what are the implications -->
-<!-- TODO check there's this file at all with this content -->
-<!-- TODO keep root login but make it non-default? -->
+1. [Connect to the VM as the user `<user>` (LOCAL)](#connect-to-the-vm-as-the-user-user-local) if not yet connected.
 
-1. To open the [`SSH`](./ssh.md#what-is-ssh) config,
+2. To open the [`SSH`](./ssh.md#what-is-ssh) config,
 
    [run in the `VS Code Terminal`](./vs-code.md#run-a-command-in-the-vs-code-terminal):
 
@@ -514,25 +512,26 @@ Complete these steps:
    sudo nano /etc/ssh/sshd_config
    ```
 
-2. Find the line `PermitRootLogin` and set it to:
+3. When asked for a password, write it and press `Enter`.
+   The shell won't show what you type.
+
+4. Find the line `PermitRootLogin yes` and set it to:
 
    ```text
    PermitRootLogin no
    ```
 
-3. Find the line `PasswordAuthentication` and set it to:
+5. Find the line `#PasswordAuthentication yes` and set it to:
 
    ```text
    PasswordAuthentication no
    ```
 
-4. Save (`Ctrl+O`, `Enter`).
+6. Save (`Ctrl+O`, `Enter`).
 
-## Restart `sshd` (REMOTE)
+### Restart `sshd` (REMOTE)
 
-1. [Connect to the VM](#connect-to-the-vm-local).
-
-2. To validate the config,
+1. To validate the config,
 
    [run in the `VS Code Terminal`](./vs-code.md#run-a-command-in-the-vs-code-terminal):
 
@@ -540,7 +539,12 @@ Complete these steps:
    sudo sshd -t
    ```
 
-   If the command prints no output, the config is valid. If it prints errors, fix them in `/etc/ssh/sshd_config` before continuing.
+   When asked for a password, write it and press `Enter`.
+   The shell won't show what you type.
+
+2. If the command prints no output, the config is valid.
+
+   If it prints errors, fix them in `/etc/ssh/sshd_config` before continuing.
 
 3. To restart the service,
 
@@ -550,22 +554,32 @@ Complete these steps:
    sudo systemctl restart sshd
    ```
 
-## Verify you can connect as the user `<user>` (LOCAL)
+   The output should be empty.
 
-1. To verify you can connect as the user `<user>`,
+### Verify that you can't connect as the user `root` (LOCAL)
+
+1. [Open a new `VS Code Terminal`](./vs-code.md#open-a-new-vs-code-terminal).
+
+2. To try to connect to the VM as the user `root`,
 
    [run in the `VS Code Terminal`](./vs-code.md#run-a-command-in-the-vs-code-terminal):
 
    ```terminal
-   ssh se-toolkit-vm
+   ssh root@<your-vm-ip-address>
    ```
 
-2. Confirm you are logged in as the user `<user>`,
-   not [the user `root`](./linux.md#the-user-root).
+   Replace the placeholder [`<your-vm-ip-address>`](./vm.md#your-vm-ip-address-placeholder).
 
-<!-- TODO where should this important alert be moved? -->
-> [!IMPORTANT]
-> Keep your current `SSH` session open until you confirm the new connection works. If the new connection fails, use the existing session to fix the config.
+   The output should be similar to this:
+
+   ```terminal
+   Received disconnect from 192.0.2.1 port 22:2: Too many authentication failures
+   Disconnected from 192.0.2.1 port 22
+   ```
+
+### Verify that you can still connect as the user `<user>` (LOCAL)
+
+1. [Connect to the VM as the user `<user>` (LOCAL)](#connect-to-the-vm-as-the-user-user-local).
 
 ## Troubleshooting
 
