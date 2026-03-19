@@ -3,6 +3,7 @@
 <h2>Table of contents</h2>
 
 - [What is `.env.docker.secret`](#what-is-envdockersecret)
+- [`REGISTRY_PREFIX`](#registry_prefix)
 - [`app`](#app)
   - [`APP_NAME`](#app_name)
   - [`APP_DEBUG`](#app_debug)
@@ -55,6 +56,16 @@ The default values are in [`.env.docker.example`](../.env.docker.example).
 > [!NOTE]
 > `.env.docker.secret` was added to [`.gitignore`](./git.md#gitignore) because you may specify there
 > [secrets](./environments.md#secrets) such as the [LMS API key](./lms-api.md#lms-api-key) or the [address of your VM](./vm.md#your-vm-ip-address).
+
+## `REGISTRY_PREFIX`
+
+The prefix prepended to [Docker image](./docker.md#image) names when pulling base images.
+By default, it points to a [`Harbor`](https://goharbor.io/) cache proxy on the university network, which avoids [`DockerHub`](./docker.md#dockerhub) rate limits.
+Outside the university network, set it to an empty string to pull directly from `DockerHub`.
+
+This value is used as a build argument in the [`app`](#app) and [`caddy`](#caddy) service [`Dockerfile`](./docker.md#what-is-docker) builds, and as an image prefix for the [`postgres`](#postgres) and [`pgadmin`](#pgadmin) services in [`docker-compose.yml`](../docker-compose.yml).
+
+Default: `harbor.pg.innopolis.university/docker-hub-cache/`
 
 ## `app`
 
