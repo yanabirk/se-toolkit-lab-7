@@ -179,7 +179,7 @@ Complete these steps:
    Replace the placeholders:
 
    - [`<qwen-code-api-base-url>`](#qwen-code-api-base-url-placeholder)
-   - `<qwen-code-api-key>` with the value of [`QWEN_CODE_API_KEY`](./qwen-code-api-dotenv-secret.md#qwen_code_api_key) from [`qwen-code-api/.env.secret` (REMOTE)](./qwen-code-api-dotenv-secret.md#about-qwen-code-apienvsecret)
+   - `<qwen-code-api-key>` with the value of [`QWEN_CODE_API_KEY`](./qwen-code-api-dotenv-secret.md#qwen_code_api_key) from [`qwen-code-api/.env.secret`](./qwen-code-api-dotenv-secret.md#about-qwen-code-apienvsecret)
    - `<qwen-model>` with one of the [available models](./qwen-code.md#view-available-models)
 
 2. When you run it, the output should be similar to this:
