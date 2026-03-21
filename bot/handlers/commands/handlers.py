@@ -38,7 +38,7 @@ def handle_labs() -> str:
 def handle_scores(lab_id: str) -> str:
     """
     Handle /scores command.
-
+    
     Args:
         lab_id: Lab identifier (e.g., "lab-04")
     """
