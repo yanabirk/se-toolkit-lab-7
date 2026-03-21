@@ -15,7 +15,7 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from handlers.commands import (
+from handlers import (
     handle_start,
     handle_help,
     handle_health,

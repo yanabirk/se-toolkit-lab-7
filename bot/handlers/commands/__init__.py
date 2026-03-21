@@ -1,6 +1,6 @@
 """Command handlers for the LMS Bot."""
 
-from .commands.handlers import (
+from .handlers import (
     handle_start,
     handle_help,
     handle_health,
