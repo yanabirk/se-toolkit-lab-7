@@ -41,24 +41,24 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def handle_message(message: str) -> str:
+async def handle_message(message: str) -> str:
     """
     Route incoming message to appropriate handler.
 
     This is the core routing logic - same function used in test mode and Telegram.
     """
     if message == "/start":
-        return handle_start()
+        return await handle_start()
     elif message == "/help":
-        return handle_help()
+        return await handle_help()
     elif message == "/health":
-        return handle_health()
+        return await handle_health()
     elif message == "/labs":
-        return handle_labs()
+        return await handle_labs()
     elif message.startswith("/scores"):
         parts = message.split(maxsplit=1)
         lab_id = parts[1] if len(parts) > 1 else ""
-        return handle_scores(lab_id)
+        return await handle_scores(lab_id)
     else:
         return "Unknown command. Use /help to see available commands."
 
@@ -83,25 +83,25 @@ async def run_telegram_bot() -> None:
     @dp.message(lambda msg: msg.text == "/start")
     async def cmd_start(message: types.Message) -> None:
         """Handle /start command."""
-        response = handle_start()
+        response = await handle_start()
         await message.answer(response)
 
     @dp.message(lambda msg: msg.text == "/help")
     async def cmd_help(message: types.Message) -> None:
         """Handle /help command."""
-        response = handle_help()
+        response = await handle_help()
         await message.answer(response)
 
     @dp.message(lambda msg: msg.text == "/health")
     async def cmd_health(message: types.Message) -> None:
         """Handle /health command."""
-        response = handle_health()
+        response = await handle_health()
         await message.answer(response)
 
     @dp.message(lambda msg: msg.text == "/labs")
     async def cmd_labs(message: types.Message) -> None:
         """Handle /labs command."""
-        response = handle_labs()
+        response = await handle_labs()
         await message.answer(response)
 
     @dp.message(lambda msg: msg.text and msg.text.startswith("/scores"))
@@ -110,14 +110,14 @@ async def run_telegram_bot() -> None:
         text = message.text if message.text else "/scores"
         parts = text.split(maxsplit=1)
         lab_id = parts[1] if len(parts) > 1 else ""
-        response = handle_scores(lab_id)
+        response = await handle_scores(lab_id)
         await message.answer(response)
 
     @dp.message()
     async def handle_unknown(message: types.Message) -> None:
         """Handle unknown commands/messages."""
         if message.text:
-            response = handle_message(message.text)
+            response = await handle_message(message.text)
             await message.answer(response)
 
     logger.info("Bot started. Polling...")
@@ -130,7 +130,7 @@ def main() -> None:
 
     if args.test:
         # Test mode: process message and print to stdout
-        response = handle_message(args.test)
+        response = asyncio.run(handle_message(args.test))
         print(response)
         sys.exit(0)
     else:
