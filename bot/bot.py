@@ -22,6 +22,7 @@ from handlers import (
     handle_labs,
     handle_scores,
 )
+from handlers.intent_router import route_natural_language
 from config import load_settings
 
 # Configure logging
@@ -59,14 +60,18 @@ async def handle_message(message: str) -> str:
         parts = message.split(maxsplit=1)
         lab_id = parts[1] if len(parts) > 1 else ""
         return await handle_scores(lab_id)
-    else:
+    elif message.startswith("/"):
         return "Unknown command. Use /help to see available commands."
+    else:
+        # Natural language query - use LLM router
+        return await route_natural_language(message)
 
 
 async def run_telegram_bot() -> None:
     """Run the bot in production mode with Telegram."""
     try:
         from aiogram import Bot, Dispatcher, types
+        from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
     except ImportError:
         logger.error("aiogram not installed. Run: uv sync")
         sys.exit(1)
@@ -84,7 +89,40 @@ async def run_telegram_bot() -> None:
     async def cmd_start(message: types.Message) -> None:
         """Handle /start command."""
         response = await handle_start()
-        await message.answer(response)
+        # Add inline keyboard buttons
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="📚 Labs", callback_data="labs")],
+                [
+                    InlineKeyboardButton(
+                        text="📊 Scores lab-04", callback_data="scores_lab-04"
+                    )
+                ],
+                [InlineKeyboardButton(text="❓ Help", callback_data="help")],
+            ]
+        )
+        await message.answer(response, reply_markup=keyboard)
+
+    @dp.callback_query(lambda cb: cb.data == "labs")
+    async def callback_labs(callback: types.CallbackQuery) -> None:
+        """Handle labs button click."""
+        response = await handle_labs()
+        await callback.message.answer(response)
+        await callback.answer()
+
+    @dp.callback_query(lambda cb: cb.data == "scores_lab-04")
+    async def callback_scores(callback: types.CallbackQuery) -> None:
+        """Handle scores button click."""
+        response = await handle_scores("lab-04")
+        await callback.message.answer(response)
+        await callback.answer()
+
+    @dp.callback_query(lambda cb: cb.data == "help")
+    async def callback_help(callback: types.CallbackQuery) -> None:
+        """Handle help button click."""
+        response = await handle_help()
+        await callback.message.answer(response)
+        await callback.answer()
 
     @dp.message(lambda msg: msg.text == "/help")
     async def cmd_help(message: types.Message) -> None:
@@ -115,7 +153,7 @@ async def run_telegram_bot() -> None:
 
     @dp.message()
     async def handle_unknown(message: types.Message) -> None:
-        """Handle unknown commands/messages."""
+        """Handle unknown commands/messages - route to LLM."""
         if message.text:
             response = await handle_message(message.text)
             await message.answer(response)
