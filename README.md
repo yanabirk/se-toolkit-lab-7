@@ -95,3 +95,104 @@ By the end of this lab, you should be able to say:
 ### Optional
 
 1. [Flutter Web Chatbot](./lab/tasks/optional/task-1.md)
+
+## Deploy
+
+This section explains how to deploy the bot on your VM using Docker Compose.
+
+### Prerequisites
+
+1. **VM access** — You should have SSH access to your VM
+2. **Environment files** — `.env.docker.secret` must exist on the VM with all required variables
+3. **Bot token** — Get from @BotFather in Telegram
+
+### Required Environment Variables
+
+In `.env.docker.secret` on the VM, ensure these are set:
+
+```bash
+# Telegram Bot
+BOT_TOKEN="1234567890:AAF..."
+
+# LMS Backend API
+LMS_API_KEY="secret"
+
+# LLM API (for natural language queries)
+LLM_API_KEY="your-llm-api-key"
+LLM_API_BASE_URL="http://localhost:11434"  # or your LLM endpoint
+LLM_API_MODEL="llama3.2"
+```
+
+### Deploy Commands
+
+```bash
+# SSH to your VM
+ssh user@vm-ip
+
+# Navigate to project
+cd ~/se-toolkit-lab-7
+
+# Pull latest changes
+git pull
+
+# Stop any running bot process (from previous nohup deployment)
+pkill -f "bot.py" 2>/dev/null
+
+# Build and start all services (including the bot)
+docker compose --env-file .env.docker.secret up --build -d
+
+# Check status
+docker compose --env-file .env.docker.secret ps
+
+# View bot logs
+docker compose --env-file .env.docker.secret logs bot --tail 50
+```
+
+### Verify Deployment
+
+1. **Check containers are running:**
+
+   ```bash
+   docker compose --env-file .env.docker.secret ps
+   ```
+
+   You should see `backend`, `postgres`, `caddy`, and `bot` all with status "Up".
+
+2. **Check backend health:**
+
+   ```bash
+   curl -sf http://localhost:42002/docs
+   ```
+
+3. **Test in Telegram:**
+   - Send `/start` — should see welcome message with inline buttons
+   - Send `/health` — should see backend status
+   - Send "what labs are available?" — should see LLM-powered response
+
+### Troubleshooting
+
+**Bot container keeps restarting:**
+
+```bash
+docker compose --env-file .env.docker.secret logs bot
+```
+
+Check for missing environment variables or import errors.
+
+**LLM queries fail:**
+
+- Ensure `LLM_API_BASE_URL` is accessible from Docker (may need `host.docker.internal`)
+- Check LLM service is running: `curl http://localhost:11434/api/tags`
+
+**Backend connection fails:**
+
+- In Docker, `LMS_API_BASE_URL` should be `http://backend:8000` (service name)
+- The docker-compose.yml already sets this correctly
+
+### Update Deployment
+
+```bash
+cd ~/se-toolkit-lab-7
+git pull
+docker compose --env-file .env.docker.secret up --build -d
+```
